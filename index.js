@@ -100,7 +100,7 @@ app.post("/verify-otp", async (req, res) => {
     // res.json({ message: 'OTP verified successfully' });
   } else {
 
-    res.status(400).send({ msg: "OTP verification failed" });
+    res.status(204).send({ msg: "OTP verification failed" });
   }
 }
 })
