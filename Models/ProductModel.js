@@ -6,6 +6,7 @@ const productShema = new mongoose.Schema({
   title: { type: String, required: true },
   image: {
     type: String,
+    required: true,
     default:
       "https://cdn.pixabay.com/photo/2017/09/10/18/25/question-2736480_1280.jpg",
   },
