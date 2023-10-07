@@ -46,7 +46,7 @@ const userLogin = async (req, res) => {
 
   bcrypt.compare(password, hashed_password, function (err, result) {
     if (err) {
-      res.send({ msg: "Something went wrong, try again later" });
+      res.status(400).send({ msg: "Something went wrong, try again later" });
     }
 
     if (result) {
@@ -54,7 +54,7 @@ const userLogin = async (req, res) => {
 
       var token = jwt.sign({ mobile }, process.env.SECRET_KEY);
       console.log("token", token);
-      res.send({ message: "Login Successfull", token: token, mobile: mobile });
+      res.status(200).send({ message: "Login Successfull", token: token, mobile: mobile });
 
       console.log(mobile);
     } else {
