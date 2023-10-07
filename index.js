@@ -93,14 +93,14 @@ app.post("/verify-otp", async (req, res) => {
 
     var token = jwt.sign({ name }, process.env.SECRET_KEY);
     console.log("token", token);
-    res.send({ msg: "Login Successfull", token: token, name: name });
+   res.status(200).send({ msg: "Login Successfull", token: token, name: name });
 
     console.log(mobile);
 
     // res.json({ message: 'OTP verified successfully' });
   } else {
 
-    res.send({ msg: "OTP verification failed" });
+    res.status(400).send({ msg: "OTP verification failed" });
   }
 }
 })
