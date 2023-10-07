@@ -23,8 +23,8 @@ const client = twilio(
   process.env.TWILIO_AUTH_TOKEN,
 );
 
-// app.use(bodyParser.urlencoded({ extended: false }));
-// app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: false }));
+app.use(bodyParser.json());
 
 
 
@@ -69,6 +69,7 @@ app.post("/send-otp", async (req, res) => {
 
 
 app.post("/verify-otp", async (req, res) => {
+
   const { mobile, enteredOTP } = req.body;
   console.log(req.body)
 
@@ -76,13 +77,17 @@ app.post("/verify-otp", async (req, res) => {
 
   const {name} = user
 
+  console.log("name" , name)
+
   const storedOTP = user.otp
 
-  console.log("stored", typeof(storedOTP), typeof(enteredOTP));
+  console.log('storedOtp', storedOTP)
+
 
   if (!storedOTP) {
-    return res.status(401).json({ msg: "OTP not found" });
+    return res.send({ msg: "OTP not found" });
   }
+  else {
 
   if (enteredOTP === storedOTP) {
 
@@ -95,9 +100,10 @@ app.post("/verify-otp", async (req, res) => {
     // res.json({ message: 'OTP verified successfully' });
   } else {
 
-    res.status(401).json({ msg: "OTP verification failed" });
+    res.send({ msg: "OTP verification failed" });
   }
-});
+}
+})
 
 app.listen(process.env.PORT, async () => {
   try {
