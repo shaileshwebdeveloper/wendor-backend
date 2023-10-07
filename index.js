@@ -23,8 +23,8 @@ const client = twilio(
   process.env.TWILIO_AUTH_TOKEN,
 );
 
-app.use(bodyParser.urlencoded({ extended: false }));
-app.use(bodyParser.json());
+// app.use(bodyParser.urlencoded({ extended: false }));
+// app.use(bodyParser.json());
 
 
 
