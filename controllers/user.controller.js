@@ -5,8 +5,9 @@ const { UserModel } = require("../Models/UserModel");
 const userSignup = async (req, res) => {
   const { name, email, password, mobile } = req.body; // destructure the response received
 
-  const isUser = await UserModel.findOne( { $or: [ { email: email }, {mobile : mobile} ] } );
-
+  const isUser = await UserModel.findOne({
+    $or: [{ email: email }, { mobile: mobile }],
+  });
 
   if (isUser) {
     res.send({ msg: "User already exists, try logging in" });
@@ -54,7 +55,9 @@ const userLogin = async (req, res) => {
 
       var token = jwt.sign({ mobile }, process.env.SECRET_KEY);
       console.log("token", token);
-      res.status(200).send({ message: "Login Successfull", token: token, mobile: mobile });
+      res
+        .status(200)
+        .send({ message: "Login Successfull", token: token, mobile: mobile });
 
       console.log(mobile);
     } else {

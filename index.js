@@ -26,14 +26,11 @@ const client = twilio(
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 
-
-
 app.post("/send-otp", async (req, res) => {
+  let { mobile } = req.body;
+  mobile = "+91" + mobile;
 
- let  { mobile } = req.body;
- mobile =  "+91" + mobile
-
-  console.log("mobile", mobile)
+  console.log("mobile", mobile);
 
   const mobileNumber = await UserModel.find({ mobile });
   //  console.log("phonenumber", mobileNumber)
@@ -51,7 +48,6 @@ app.post("/send-otp", async (req, res) => {
       to: mobile,
     })
     .then(async () => {
-
       await UserModel.updateOne(
         { mobile: mobile },
         { $set: { otp: otp } },
@@ -66,44 +62,38 @@ app.post("/send-otp", async (req, res) => {
     });
 });
 
-
-
 app.post("/verify-otp", async (req, res) => {
-
   const { mobile, enteredOTP } = req.body;
-  console.log(req.body)
+  console.log(req.body);
 
   const user = await UserModel.findOne({ mobile });
 
-  const {name} = user
+  const { name } = user;
 
-  console.log("name" , name)
+  console.log("name", name);
 
-  const storedOTP = user.otp
+  const storedOTP = user.otp;
 
-  console.log('storedOtp', storedOTP)
-
+  console.log("storedOtp", storedOTP);
 
   if (!storedOTP) {
     return res.send({ msg: "OTP not found" });
-  }
-  else {
-
-  if (enteredOTP === storedOTP) {
-
-    var token = jwt.sign({ name }, process.env.SECRET_KEY);
-    console.log("token", token);
-   res.status(200).send({ msg: "Login Successfull", token: token, name: name });
-
-    console.log(mobile);
-
-    // res.json({ message: 'OTP verified successfully' });
   } else {
+    if (enteredOTP === storedOTP) {
+      var token = jwt.sign({ name }, process.env.SECRET_KEY);
+      console.log("token", token);
+      res
+        .status(200)
+        .send({ msg: "Login Successfull", token: token, name: name });
 
-    res.status(204).send({ msg: "OTP verification failed" });
+      console.log(mobile);
+
+      // res.json({ message: 'OTP verified successfully' });
+    } else {
+      res.status(204).send({ msg: "OTP verification failed" });
+    }
   }
-}
-})
+});
 
 app.listen(process.env.PORT, async () => {
   try {
