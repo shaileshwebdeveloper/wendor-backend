@@ -331,12 +331,12 @@ app.post("/verify-otp", async (req, res) => {
     console.log("token", token);
     res.status(200).send({ msg: "Login Successfull", token: token, name: name });
   }else {
-    res.status(404).send({ msg: "OTP verification failed"});
+    res.send({ msg: "OTP verification failed"});
   }
 
   }
   else{
-    return res.status(404).send({ msg: "Please Check the mobile number" });
+    return res.send({ msg: "Please Check the mobile number" });
   }
 
 
