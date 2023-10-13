@@ -258,11 +258,11 @@ app.post("/send-otp", async (req, res) => {
 
   console.log("mobile", mobile);
 
-  const mobileNumber = await UserModel.find({ mobile });
+  const mobileNumber = await UserModel.findOne({ mobile });
   //  console.log("phonenumber", mobileNumber)
 
   if (!mobileNumber) {
-    return res.status(400).json({ message: "Phone number is required" });
+    return res.json({ msg: "Something went wrong please try again" });
   }
   else{
 
@@ -278,35 +278,16 @@ app.post("/send-otp", async (req, res) => {
         { upsert: true },
       );
 
-      res.status(200).json({ message: 'OTP sent successfully' });
+      res.json({ msg: 'OTP sent successfully' });
     } else {
-      res.status(400).json({ message: 'Failed to send OTP' });
+      res.json({ msg: 'Failed to send OTP' });
     }
   } catch (error) {
     console.error(error);
-    res.status(500).json({ message: 'Internal Server Error' });
+    res.json({ msg: 'Internal Server Error' });
   }
 }
 
-  // client.messages
-  //   .create({
-  //     body: `Your OTP for login is: ${otp}`,
-  //     from: process.env.TWILIO_PHONE_NUMBER,
-  //     to: mobile,
-  //   })
-  //   .then(async () => {
-  //     await UserModel.updateOne(
-  //       { mobile: mobile },
-  //       { $set: { otp: otp } },
-  //       { upsert: true },
-  //     );
-
-  //     res.json({ msg: "OTP sent successfully" });
-  //   })
-  //   .catch((error) => {
-  //     console.error(error);
-  //     res.status(500).json({ msg: "Failed to send OTP" });
-  //   });
 });
 
 app.post("/verify-otp", async (req, res) => {
@@ -317,19 +298,14 @@ app.post("/verify-otp", async (req, res) => {
   
   if(user){
 
-      const { name } = user;
-
-  console.log("name", name);
+  const { name } = user;
 
   const storedOTP = user.otp;
-
-  console.log("storedOtp", storedOTP);
+  console.log(storedOTP, "storedOtp", enteredOTP, "enterOtp")
 
   if (enteredOTP === storedOTP) {
     const token = jwt.sign({ name }, process.env.SECRET_KEY);
-    console.log(mobile);
-    console.log("token", token);
-    res.status(200).send({ msg: "Login Successfull", token: token, name: name });
+    res.send({ msg: "Login Successfull", token: token, name: name });
   }else {
     res.send({ msg: "OTP verification failed"});
   }
