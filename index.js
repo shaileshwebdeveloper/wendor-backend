@@ -324,7 +324,7 @@ app.post("/verify-otp", async (req, res) => {
   console.log("storedOtp", storedOTP);
 
   if (!storedOTP) {
-    return res.send({ msg: "OTP not found" });
+    return res.status(404).send({ msg: "OTP not found" });
   } 
 
 
@@ -333,8 +333,6 @@ app.post("/verify-otp", async (req, res) => {
       console.log(mobile);
       console.log("token", token);
       res.status(200).send({ msg: "Login Successfull", token: token, name: name });
-
-      // res.json({ message: 'OTP verified successfully' });
     }else {
       res.status(204).send({ msg: "OTP verification failed" });
     }
