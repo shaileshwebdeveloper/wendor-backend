@@ -325,7 +325,9 @@ app.post("/verify-otp", async (req, res) => {
 
   if (!storedOTP) {
     return res.send({ msg: "OTP not found" });
-  } else {
+  } 
+
+
     if (enteredOTP === storedOTP) {
       const token = jwt.sign({ name }, process.env.SECRET_KEY);
       console.log(mobile);
@@ -336,7 +338,7 @@ app.post("/verify-otp", async (req, res) => {
     }else {
       res.status(204).send({ msg: "OTP verification failed" });
     }
-  }
+  
 });
 
 app.listen(process.env.PORT, async () => {
