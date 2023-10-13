@@ -3,7 +3,12 @@ const jwt = require("jsonwebtoken");
 const { UserModel } = require("../Models/UserModel");
 
 const userSignup = async (req, res) => {
+
+  console.log(req.body)
+
   const { name, email, password, mobile } = req.body; // destructure the response received
+
+  console.log(name, email, password, mobile)
 
   const isUser = await UserModel.findOne({
     $or: [{ email: email }, { mobile: mobile }],

@@ -20,7 +20,11 @@
     "jsonwebtoken": "^9.0.2",
     "mongoose": "^7.5.4",
     "nodemon": "^3.0.1",
-    "twilio": "^4.18.1"
+    "swagger": "^0.7.5",
+    "swagger-jsdoc": "^6.2.8",
+    "swagger-ui-express": "^5.0.0",
+    "twilio": "^4.18.1",
+    "yaml": "^2.3.2"
   },
   "devDependencies": {
     "prettier": "^3.0.3"

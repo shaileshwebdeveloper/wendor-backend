@@ -8,14 +8,217 @@ const twilio = require("twilio");
 const { UserModel } = require("./Models/UserModel");
 const jwt = require("jsonwebtoken");
 
+
+const swaggerJSDoc= require('swagger-jsdoc')
+const swaggerUi = require('swagger-ui-express')
+
 require("dotenv").config();
 
 const app = express();
 app.use(cors());
 
+
 app.use(express.json());
 
+
+const options = {
+   definition :{
+   openapi : "3.0.0",
+   info : {
+      title : 'Wendor Full Stack Project',
+      version : '1.0.0'
+   },
+   servers : [
+    { 
+      url : 'http://localhost:3001/'
+     }
+   ]
+  },
+  apis : ['index.js']
+}
+
+const swaggerSpec = swaggerJSDoc(options)
+
+app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec))
+
+
+
+
 app.use("/", userRouter);
+
+
+/**
+ * @swagger
+ * /products:
+ *    get:
+ *      summary  : Get All Products
+ *      description : This api get all products
+ *      responses: 
+ *            200:
+ *              description : To get all products
+ */
+
+
+
+/**
+ * @swagger
+ * /create:
+ *   post:
+ *     summary: Create New Product
+ *     description: Create a new products using POST request
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               title:
+ *                 type: string
+ *               image:
+ *                 type: string
+ *               price:
+ *                 type: number
+ *     responses:
+ *       '200':
+ *         description: Resource created successfully
+ *       400:
+ *         description: Bad Request
+ */
+
+
+/**
+ * @swagger
+ * /products/{id}:
+ *   patch:
+ *     summary: Update an existing resource
+ *     description: Update an existing resource using a PATCH request
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         description: ID of the resource to be updated
+ *         required: true
+ *         type: string
+ *       - in: body
+ *         name: Products
+ *         description: Updated resource data
+ *         required: true
+ *         schema:
+ *           type: object
+ *           properties:
+ *             title:
+ *                type: string
+ *             image :
+ *                type: string
+ *             price : 
+ *               type : number
+ *     responses:
+ *       200:
+ *         description: Resource updated successfully
+ *       400:
+ *         description: Bad Request
+ *       404:
+ *         description: Resource not found
+ */
+
+/**
+ * @swagger
+ * /products/{id}:
+ *   delete:
+ *     summary: Delete a resource
+ *     description: Delete a resource using a DELETE request
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         description: ID of the resource to be deleted
+ *         required: true
+ *         type: string
+ *     responses:
+ *       204:
+ *         description: Resource deleted successfully
+ *       404:
+ *         description: Resource not found
+ */
+
+
+/**
+ * @swagger
+ * /signup:
+ *   post:
+ *     summary: Create New Product
+ *     description: Create a new products using POST request
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               name:
+ *                 type: string
+ *               email:
+ *                 type: string
+ *               password:
+ *                 type : string
+ *               mobile:
+ *                type : string
+ *     responses:
+ *       '200':
+ *         description: Resource created successfully
+ *       400:
+ *         description: Bad Request
+ */
+
+/**
+ * @swagger
+ * /send-otp:
+ *   post:
+ *     summary: Create New Product
+ *     description: Create a new products using POST request
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               mobile:
+ *                 type: string
+ *     responses:
+ *       '200':
+ *         description: Resource created successfully
+ *       400:
+ *         description: Bad Request
+ */
+
+
+
+/**
+ * @swagger
+ * /verify-otp:
+ *   post:
+ *     summary: Create New Product
+ *     description: Create a new products using POST request
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               mobile:
+ *                 type: string
+ *               otp:
+ *                 type: number
+ *     responses:
+ *       '200':
+ *         description: Resource created successfully
+ *       400:
+ *         description: Bad Request
+ */
+
+
+
 app.use("/", productRouter);
 
 const client = twilio(
@@ -80,16 +283,13 @@ app.post("/verify-otp", async (req, res) => {
     return res.send({ msg: "OTP not found" });
   } else {
     if (enteredOTP === storedOTP) {
-      var token = jwt.sign({ name }, process.env.SECRET_KEY);
-      console.log("token", token);
-      res
-        .status(200)
-        .send({ msg: "Login Successfull", token: token, name: name });
-
+      const token = jwt.sign({ name }, process.env.SECRET_KEY);
       console.log(mobile);
+      console.log("token", token);
+      res.status(200).send({ msg: "Login Successfull", token: token, name: name });
 
       // res.json({ message: 'OTP verified successfully' });
-    } else {
+    }else {
       res.status(204).send({ msg: "OTP verification failed" });
     }
   }
