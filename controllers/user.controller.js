@@ -23,7 +23,7 @@ const userSignup = async (req, res) => {
       // Store hash in your password DB.
 
       if (err) {
-        res.send("Something went wrong please try again");
+        res.send({ msg: "Something went wrong please try again"});
         console.log("err", err);
       } else {
         const new_user = new UserModel({
@@ -35,9 +35,9 @@ const userSignup = async (req, res) => {
 
         try {
           await new_user.save(); // if dont want to use insertMany u can use this.
-          res.send("Signup Successful");
+          res.send({msg : "Signup Successful"});
         } catch (error) {
-          res.send("Something went wrong please try again");
+          res.send({msg :"Something went wrong please try again"});
           console.log("error", error);
         }
       }
