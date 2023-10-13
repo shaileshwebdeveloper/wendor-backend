@@ -314,8 +314,10 @@ app.post("/verify-otp", async (req, res) => {
   console.log(req.body);
 
   const user = await UserModel.findOne({ mobile });
+  
+  if(user){
 
-  const { name } = user;
+      const { name } = user;
 
   console.log("name", name);
 
@@ -323,19 +325,21 @@ app.post("/verify-otp", async (req, res) => {
 
   console.log("storedOtp", storedOTP);
 
-  if (!storedOTP && mobile) {
+  if (enteredOTP === storedOTP) {
+    const token = jwt.sign({ name }, process.env.SECRET_KEY);
+    console.log(mobile);
+    console.log("token", token);
+    res.status(200).send({ msg: "Login Successfull", token: token, name: name });
+  }else {
+    res.status(404).send({ msg: "OTP verification failed"});
+  }
+
+  }
+  else{
     return res.status(404).send({ msg: "Please Check the mobile number" });
-  } 
+  }
 
 
-    if (enteredOTP === storedOTP) {
-      const token = jwt.sign({ name }, process.env.SECRET_KEY);
-      console.log(mobile);
-      console.log("token", token);
-      res.status(200).send({ msg: "Login Successfull", token: token, name: name });
-    }else {
-      res.status(204).send({ msg: "OTP verification failed" });
-    }
   
 });
 
