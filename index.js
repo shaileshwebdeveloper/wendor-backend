@@ -323,8 +323,8 @@ app.post("/verify-otp", async (req, res) => {
 
   console.log("storedOtp", storedOTP);
 
-  if (!storedOTP) {
-    return res.status(404).send({ msg: "OTP not found" });
+  if (!storedOTP && mobile) {
+    return res.status(404).send({ msg: "Please Check the mobile number" });
   } 
 
 
