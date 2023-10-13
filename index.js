@@ -7,6 +7,7 @@ const bodyParser = require("body-parser");
 const twilio = require("twilio");
 const { UserModel } = require("./Models/UserModel");
 const jwt = require("jsonwebtoken");
+const axios = require('axios');
 
 
 const swaggerJSDoc= require('swagger-jsdoc')
@@ -229,9 +230,31 @@ const client = twilio(
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 
+
+const sendOTP =  async(phoneNumber, otp) => {
+const url = 'https://www.fast2sms.com/dev/bulkV2';
+const data = {
+  "message": `Your Otp is ${otp}`,
+  "language": "english",
+  "route": "q",
+  "numbers": `${phoneNumber}`
+};
+
+const config = {
+  headers: {
+    Authorization: process.env.API_KEY,
+  },
+};
+
+return axios.post(url, data, config);
+
+}
+
+
+
 app.post("/send-otp", async (req, res) => {
   let { mobile } = req.body;
-  mobile = "+91" + mobile;
+  mobile =  mobile;
 
   console.log("mobile", mobile);
 
@@ -241,28 +264,49 @@ app.post("/send-otp", async (req, res) => {
   if (!mobileNumber) {
     return res.status(400).json({ message: "Phone number is required" });
   }
+  else{
 
-  const otp = Math.floor(100000 + Math.random() * 900000);
+  try {
+    const otp = Math.floor(100000 + Math.random() * 900000);
+    const response = await sendOTP(mobile, otp);
 
-  client.messages
-    .create({
-      body: `Your OTP for login is: ${otp}`,
-      from: process.env.TWILIO_PHONE_NUMBER,
-      to: mobile,
-    })
-    .then(async () => {
+    if (response.data.return) {
+
       await UserModel.updateOne(
         { mobile: mobile },
         { $set: { otp: otp } },
         { upsert: true },
       );
 
-      res.json({ msg: "OTP sent successfully" });
-    })
-    .catch((error) => {
-      console.error(error);
-      res.status(500).json({ msg: "Failed to send OTP" });
-    });
+      res.status(200).json({ message: 'OTP sent successfully' });
+    } else {
+      res.status(400).json({ message: 'Failed to send OTP' });
+    }
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: 'Internal Server Error' });
+  }
+}
+
+  // client.messages
+  //   .create({
+  //     body: `Your OTP for login is: ${otp}`,
+  //     from: process.env.TWILIO_PHONE_NUMBER,
+  //     to: mobile,
+  //   })
+  //   .then(async () => {
+  //     await UserModel.updateOne(
+  //       { mobile: mobile },
+  //       { $set: { otp: otp } },
+  //       { upsert: true },
+  //     );
+
+  //     res.json({ msg: "OTP sent successfully" });
+  //   })
+  //   .catch((error) => {
+  //     console.error(error);
+  //     res.status(500).json({ msg: "Failed to send OTP" });
+  //   });
 });
 
 app.post("/verify-otp", async (req, res) => {
