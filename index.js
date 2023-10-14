@@ -291,8 +291,9 @@ app.post("/send-otp", async (req, res) => {
 });
 
 app.post("/verify-otp", async (req, res) => {
+
   const { mobile, enteredOTP } = req.body;
-  console.log(req.body);
+  console.log("req.body", req.body);
 
   const user = await UserModel.findOne({ mobile });
   
@@ -300,11 +301,11 @@ app.post("/verify-otp", async (req, res) => {
 
   const { name } = user;
 
-  const storedOTP = user.otp;
+  const storedOTP =  user.otp;
   console.log(storedOTP, "storedOtp", enteredOTP, "enterOtp")
 
   if (enteredOTP === storedOTP) {
-    const token = jwt.sign({ name }, process.env.SECRET_KEY);
+    const token =  jwt.sign({ name }, process.env.SECRET_KEY);
     res.send({ msg: "Login Successfull", token: token, name: name });
   }else {
     res.send({ msg: "OTP verification failed"});
