@@ -259,7 +259,7 @@ app.post("/send-otp", async (req, res) => {
   console.log("mobile", mobile);
 
   const mobileNumber = await UserModel.findOne({ mobile });
-  //  console.log("phonenumber", mobileNumber)
+   console.log("phonenumber", mobileNumber)
 
   if (!mobileNumber) {
     return res.json({ msg: "Something went wrong please try again" });
